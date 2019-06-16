@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alpha.pojo">
+    <!--<select id="listProduct" resultType="Product">-->
+        <!--select * from product_test;-->
+    <!--</select>-->
+    <resultMap id="productBean" type="Product">
+        <id column="pid" property="id"/>
+        <result column="pname" property="name"/>
+        <result column="price" property="price"/>
+        <!--<result column="category" property="category"/>-->
+
+        <association property="category" javaType="Category">
+            <id column="cid" property="id"/>
+            <result column="cname" property="name"/>
+        </association>
+    </resultMap>
+    <select id="listProductByName" resultType="Product">
+        select * from product_ where name like concat('%',#{name},'%');
+    </select>
+
+
+    <select id="listProduct" resultMap="productBean">
+        select p.id 'pid',p.name 'pname',p.price ,c.id 'cid',c.name 'cname' from product_ p left join category_ c on c.id=p.cid
+    </select>
+
+    <insert id="addProduct" parameterType="Product">
+        insert into product_ (name,price,cid) values (#{name},#{price},#{cid})
+    </insert>
+    <delete id="deleteProduct" parameterType="Product">
+        delete from product_ where id=#{id}
+    </delete>
+    <select id="getProduct" parameterType="_int" resultType="Product">
+        select * from product_ where id=#{id}
+    </select>
+    <update id="updateProduct" parameterType="Product">
+        update product_ set name=#{name} , price=#{price},cid=#{category.id}  where id=#{id}
+    </update>
+    <update id="updateProduct_map" parameterType="map" >
+        update product_ set cid=#{cid} where id=#{id}
+    </update>
+    
+    
+</mapper>
